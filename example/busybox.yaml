@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: busybox
+  labels:
+    app: busybox
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: busybox
+  template:
+    metadata:
+      labels:
+        app: busybox
+    spec:
+      containers:
+      - name: busybox
+        image: ulm-docker.jfrog.io/test4/busybox
+        env:
+        - name: ANONYMOUS_NOTARY_CALL
+          value: "true"
+        command:
+          - sleep
+          - "480"
+        imagePullPolicy: IfNotPresent
+      imagePullSecrets:
+      - name: regcred

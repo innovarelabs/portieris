@@ -21,6 +21,8 @@ spec:
         release: {{ .Release.Name }}
     spec:
       serviceAccountName: portieris
+      imagePullSecrets:
+      - name: {{ .Values.registry.name }}
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.host }}/{{ .Values.image.image }}:{{ .Values.image.tag }}"
@@ -34,6 +36,8 @@ spec:
             readOnly: true
             mountPath: "/etc/certs"
           env:
+          - name: AUTHORIZE_NON_AUTHENTICATED_CALL_TO_NOTARY
+            value: "true"
           resources:
 {{ toYaml .Values.resources | indent 12 }}
     {{- with .Values.nodeSelector }}

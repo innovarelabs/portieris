@@ -17,6 +17,7 @@ package notary
 import (
 	"encoding/json"
 	"fmt"
+	"os"
 	"strconv"
 	"strings"
 
@@ -135,17 +136,21 @@ func (c *Controller) mutatePodSpec(namespace, specPath string, pod corev1.PodSpe
 						continue containerLoop
 					}
 				}
+				notaryToken := ""
 
-				username, password, err := c.kubeClientsetWrapper.GetSecretToken(namespace, secret.Name, img.GetHostname())
-				if err != nil {
-					glog.Error(err)
-					continue secretLoop
-				}
+				//if pod.Containers[0].Env[0].Name != "ANONYMOUS_NOTARY_CALL" {
+				if b, err := strconv.ParseBool(os.Getenv("AUTHORIZE_NON_AUTHENTICATED_CALL_TO_NOTARY")); b && err == nil {
+					username, password, err := c.kubeClientsetWrapper.GetSecretToken(namespace, secret.Name, img.GetHostname())
+					if err != nil {
+						glog.Error(err)
+						continue secretLoop
+					}
 
-				notaryToken, err := c.cr.GetContentTrustToken(username, password, img.NameWithoutTag(), img.GetRegistryURL())
-				if err != nil {
-					glog.Error(err)
-					continue secretLoop
+					notaryToken, err = c.cr.GetContentTrustToken(username, password, img.NameWithoutTag(), img.GetRegistryURL())
+					if err != nil {
+						glog.Error(err)
+						continue secretLoop
+					}
 				}
 
 				var signers []Signer
@@ -153,6 +158,7 @@ func (c *Controller) mutatePodSpec(namespace, specPath string, pod corev1.PodSpe
 					// Generate a []Singer with the values for each signerSecret
 					signers = make([]Signer, len(policy.Trust.SignerSecrets))
 					for i, secretName := range policy.Trust.SignerSecrets {
+
 						signers[i], err = c.getSignerSecret(namespace, secretName.Name)
 						if err != nil {
 							a.StringToAdmissionResponse(fmt.Sprintf("Deny %q, could not get signerSecret from your cluster, %s", img.String(), err.Error()))
@@ -165,6 +171,8 @@ func (c *Controller) mutatePodSpec(namespace, specPath string, pod corev1.PodSpe
 				glog.Info("getting signed image...")
 
 				digest, err := c.getDigest(notaryURL, img.NameWithoutTag(), notaryToken, img.GetTag(), signers)
+				//a.StringToAdmissionResponse(fmt.Sprintf("===> digest: %+v\n", digest ))
+				//a.StringToAdmissionResponse(fmt.Sprintf("===> err: %+v\n", err ))
 				if err != nil {
 					if strings.Contains(err.Error(), "401") {
 						continue secretLoop
@@ -185,6 +193,7 @@ func (c *Controller) mutatePodSpec(namespace, specPath string, pod corev1.PodSpe
 						Path:  fmt.Sprintf("%s/%s/%s/image", specPath, containerType, strconv.Itoa(containerIndex)),
 						Value: fmt.Sprintf("%s@sha256:%s", img.NameWithTag(), digest.String()),
 					})
+					glog.Infof("patches: %v\n", patches)
 				}
 				a.SetAllowed()
 				break secretLoop
@@ -196,6 +205,7 @@ func (c *Controller) mutatePodSpec(namespace, specPath string, pod corev1.PodSpe
 	}
 
 	if a.HasErrors() {
+		a.StringToAdmissionResponse(fmt.Sprintf("===> a.HasErrors(): %+v\n", a ))
 		return a.Flush()
 	}
 

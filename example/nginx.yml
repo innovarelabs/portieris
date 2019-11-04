@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+  labels:
+    app: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: ulm-docker.jfrog.io/test/nginx
+        env:
+        - name: ANONYMOUS_NOTARY_CALL
+          value: "true"
+        ports:
+        - containerPort: 80
+      imagePullSecrets:
+      - name: regcred 

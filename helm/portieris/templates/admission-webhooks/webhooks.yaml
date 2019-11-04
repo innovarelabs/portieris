@@ -10,7 +10,7 @@ metadata:
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 webhooks:
-  - name: trust.hooks.securityenforcement.admission.cloud.ibm.com
+  - name: {{ .Values.admission.webhook.name }}
     clientConfig:
       service:
         name: {{ template "portieris.name" . }}

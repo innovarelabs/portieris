@@ -3,12 +3,14 @@
 # Declare variables to be passed into your templates.
 
 replicaCount: 3
-namespace: ibm-system
-
+namespace: portieris
+admission:
+  webhook:
+    name: trust.hooks.securityenforcement.admission.cloud.ibm.com
 image:
-  host: docker.io/ibmcom
+  host: registryUrl
   image: portieris
-  tag: 0.5.2
+  tag: 0.5.2-nt
   pullPolicy: Always
 
 service:
@@ -16,8 +18,22 @@ service:
   port: 443
   targetPort: 8000
 
+trustPublicKey:
+  enable: true
+  name: signe-secret
+
+registry:
+  name: regcred
+  host: registryUrl
+  username: myUser
+  password: myPass
+
+serversUrl:
+  regisry: registryUrl/*
+  notary: notaryUrl
+
 # If not running on IBM Cloud Container Service set to false
-IBMContainerService: true
+IBMContainerService: false
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
