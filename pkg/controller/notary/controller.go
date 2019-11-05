@@ -138,8 +138,7 @@ func (c *Controller) mutatePodSpec(namespace, specPath string, pod corev1.PodSpe
 				}
 				notaryToken := ""
 
-				//if pod.Containers[0].Env[0].Name != "ANONYMOUS_NOTARY_CALL" {
-				if b, err := strconv.ParseBool(os.Getenv("AUTHORIZE_NON_AUTHENTICATED_CALL_TO_NOTARY")); b && err == nil {
+				if b, err := strconv.ParseBool(os.Getenv("AUTHENTICATED_CALL_TO_NOTARY")); b && err == nil {
 					username, password, err := c.kubeClientsetWrapper.GetSecretToken(namespace, secret.Name, img.GetHostname())
 					if err != nil {
 						glog.Error(err)

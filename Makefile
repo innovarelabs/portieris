@@ -1,7 +1,7 @@
 GOFILES=$(shell find . -type f -name '*.go' -not -path "./vendor/*")
 GOPACKAGES=$(shell go list ./... | grep -v /vendor/ | grep -v test/ | grep -v pkg/apis/)
 HUB=$(shell yq r helm/portieris/values.yaml image.host)
-TAG=0.5.2-nt
+TAG=$(shell yq r helm/portieris/Chart.yaml version)
 
 dep:
 	@go get -u github.com/golang/dep/cmd/dep

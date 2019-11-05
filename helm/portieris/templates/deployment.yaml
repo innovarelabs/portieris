@@ -35,9 +35,11 @@ spec:
           - name: portieris-certs
             readOnly: true
             mountPath: "/etc/certs"
+          {{- if .Values.allowUnauthenticatedNotaryCall }}
           env:
-          - name: AUTHORIZE_NON_AUTHENTICATED_CALL_TO_NOTARY
-            value: "true"
+          - name: AUTHENTICATED_CALL_TO_NOTARY
+            value: "false"
+          {{- end }}
           resources:
 {{ toYaml .Values.resources | indent 12 }}
     {{- with .Values.nodeSelector }}

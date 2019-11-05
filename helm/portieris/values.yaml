@@ -32,6 +32,8 @@ serversUrl:
   regisry: registryUrl/*
   notary: notaryUrl
 
+allowUnauthenticatedNotaryCall: true
+
 # If not running on IBM Cloud Container Service set to false
 IBMContainerService: false
 
