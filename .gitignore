@@ -6,6 +6,4 @@ cover.*
 bin
 .idea
 .go-version
-helm/portieris/certs/caCert.pem
-helm/portieris/certs/serverCert.pem
-helm/portieris/certs/serverKey.pem
+*.pem

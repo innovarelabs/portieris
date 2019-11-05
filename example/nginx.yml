@@ -16,10 +16,7 @@ spec:
     spec:
       containers:
       - name: nginx
-        image: ulm-docker.jfrog.io/test/nginx
-        env:
-        - name: ANONYMOUS_NOTARY_CALL
-          value: "true"
+        image: ulm-docker.jfrog.io/test7/nginx
         ports:
         - containerPort: 80
       imagePullSecrets:

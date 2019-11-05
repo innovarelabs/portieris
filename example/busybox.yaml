@@ -17,9 +17,6 @@ spec:
       containers:
       - name: busybox
         image: ulm-docker.jfrog.io/test4/busybox
-        env:
-        - name: ANONYMOUS_NOTARY_CALL
-          value: "true"
         command:
           - sleep
           - "480"
