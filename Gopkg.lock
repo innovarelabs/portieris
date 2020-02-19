@@ -299,12 +299,12 @@
   version = "v1.0.3"
 
 [[projects]]
-  digest = "1:18752d0b95816a1b777505a97f71c7467a8445b8ffb55631a7bf779f6ba4fa83"
+  digest = "1:5e8f46b412421d2d6cceea845d28ac46f3f5a5f60a6e86f0ee75e24fd43a02a9"
   name = "github.com/stretchr/testify"
   packages = ["assert"]
   pruneopts = "UT"
-  revision = "f35b8ab0b5a2cef36673838d662e249dd9c94686"
-  version = "v1.2.2"
+  revision = "624f997379a27f38832b4b22ef5e4d31385c6daf"
+  version = "v1.5.0"
 
 [[projects]]
   digest = "1:a5702d6fd0891671faf050c05451d3ee4cfd70cb958e11556fefaca628ce832e"
